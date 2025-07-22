@@ -1,4 +1,6 @@
-use crate::prelude::*;
+use crate::From;
+
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, From, Eq, PartialEq, Serialize, Deserialize)]
 pub enum Model {
@@ -9,7 +11,7 @@ pub enum Model {
     Gemma2_9b,
     #[serde(rename = "gemma-2-27b-it")]
     Gemma2_27b,
-    
+
     // gemma 3:
     #[serde(rename = "gemma-3-1b-it-qat")]
     Gemma3_1b,
@@ -21,8 +23,8 @@ pub enum Model {
     Gemma3_27b,
 
     // TODO: to add more models..
-    
+
     // custom:
     #[from]
-    Custom(String)
+    Custom(String),
 }

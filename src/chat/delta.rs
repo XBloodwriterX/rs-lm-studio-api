@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use serde::Deserialize;
 
 // Response stream delta
 #[derive(Debug, Clone, Deserialize)]

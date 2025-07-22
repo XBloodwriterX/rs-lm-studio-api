@@ -1,5 +1,6 @@
-use crate::prelude::*;
-use super::Role;
+use crate::{From, Role};
+
+use serde::{Deserialize, Serialize};
 
 // A message
 #[derive(Debug, Clone, From, Serialize, Deserialize)]

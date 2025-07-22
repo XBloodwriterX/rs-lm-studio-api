@@ -1,5 +1,6 @@
-use crate::prelude::*;
-use super::{ Message, Delta };
+use crate::{Delta, Message};
+
+use serde::{Deserialize, Serialize};
 
 // Response choice
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -9,7 +10,6 @@ pub struct Choice {
     pub finish_reason: String,
     pub message: Message,
 }
-
 
 // Response choice stream
 #[derive(Debug, Clone, Deserialize)]

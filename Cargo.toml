@@ -11,11 +11,14 @@ readme = "README.md"
 edition = "2021"
 
 [dependencies]
+futures = "0.3.31"
+futures-util = "0.3.31"
+macron-impl-display = "0.1.1"
+macron-impl-error = "0.1.1"
+macron-impl-from = "0.1.1"
+macron-str = "0.1.1"
+reqwest = { version = "0.12.15", features = ["json", "stream"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 tokio = { version = "1.45.0", features = ["full"] }
-reqwest = { version = "0.12.15", features = ["json", "stream"] }
-futures-util = "0.3.31"
-macron = "0.1.0"
 tokio-stream = "0.1.17"
-futures = "0.3.31"

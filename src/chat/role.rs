@@ -1,4 +1,4 @@
-use crate::prelude::*;
+use serde::{Deserialize, Serialize};
 
 // A message role
 #[derive(Debug, Clone, Serialize, Deserialize)]

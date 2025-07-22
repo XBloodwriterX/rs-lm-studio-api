@@ -1,31 +1,30 @@
-// use crate::prelude::*;
-use super::{ Role, Message };
+use crate::{Message, Role};
 
 // Chat context
 #[derive(Debug, Clone)]
 pub struct Context {
     messages: Vec<Message>,
     context_tokens: usize,
-    context_limit: usize
+    context_limit: usize,
 }
 
 impl Context {
     // Creates a new chat context
     pub fn new<S>(context: S, context_limit: usize) -> Self
     where
-        S: Into<String>
+        S: Into<String>,
     {
         Self {
             messages: vec![Message::new(Role::System, context.into())],
             context_tokens: 0,
-            context_limit
+            context_limit,
         }
     }
 
     // Add a message to context
     pub fn add<M>(&mut self, message: M)
     where
-        M: Into<Message>
+        M: Into<Message>,
     {
         let message = message.into();
 

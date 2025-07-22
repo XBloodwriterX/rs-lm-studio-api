@@ -1,5 +1,7 @@
-use crate::prelude::*;
-use super::{ Choice, StreamChoice, Usage, Role, Message };
+use crate::{str, Choice, Message, Role, StreamChoice, Usage};
+use std::collections::HashMap;
+
+use serde::Deserialize;
 
 // Chat response
 #[derive(Debug, Clone, Deserialize)]
@@ -22,7 +24,6 @@ impl Response {
     }
 }
 
-
 use futures::StreamExt;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 
@@ -32,16 +33,22 @@ pub struct ResponseReader {
     pub receiver: UnboundedReceiverStream<std::result::Result<StreamChoice, reqwest::Error>>,
     pub message: Message,
     pub is_ready: bool,
-    pub context: bool
+    pub context: bool,
 }
 
 impl ResponseReader {
-    pub fn new(receiver: UnboundedReceiverStream<std::result::Result<StreamChoice, reqwest::Error>>, context: bool) -> Self {
+    pub fn new(
+        receiver: UnboundedReceiverStream<std::result::Result<StreamChoice, reqwest::Error>>,
+        context: bool,
+    ) -> Self {
         Self {
             receiver,
-            message: Message { role: Role::Assistant, content: str!("") },
+            message: Message {
+                role: Role::Assistant,
+                content: str!(""),
+            },
             is_ready: false,
-            context
+            context,
         }
     }
 
@@ -49,25 +56,23 @@ impl ResponseReader {
         let result = self.receiver.next().await;
 
         match result {
-            Some(result) => {
-                match result {
-                    Ok(choice) => {
-                        if let Some(text) = choice.delta.content {
-                            self.message.content.push_str(&text);
+            Some(result) => match result {
+                Ok(choice) => {
+                    if let Some(text) = choice.delta.content {
+                        self.message.content.push_str(&text);
 
-                            Some(Ok(text))
-                        } else {
-                            Some(Ok(String::new()))
-                        }
-                    },
-
-                    Err(e) => Some(Err(e))
+                        Some(Ok(text))
+                    } else {
+                        Some(Ok(String::new()))
+                    }
                 }
+
+                Err(e) => Some(Err(e)),
             },
 
             _ => {
                 self.is_ready = true;
-                
+
                 None
             }
         }

@@ -1,5 +1,6 @@
-use crate::prelude::*;
-use super::{ Model, Message };
+use crate::{Message, Model};
+
+use serde::Serialize;
 
 // Chat request
 #[derive(Debug, Clone, Serialize)]
@@ -21,7 +22,7 @@ impl ::std::default::Default for Request {
             context: true,
             temperature: 0.7,
             max_tokens: 4090,
-            stream: false
+            stream: false,
         }
     }
 }

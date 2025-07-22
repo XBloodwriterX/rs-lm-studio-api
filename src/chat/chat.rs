@@ -1,8 +1,8 @@
-use crate::prelude::*;
-use super::*;
+use crate::{Context, Message, Model, Request, Response, ResponseReader, Result, Role, Stream};
+use std::format as fmt;
 
-use reqwest::Client;
 use futures_util::StreamExt;
+use reqwest::Client;
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 
@@ -12,7 +12,7 @@ pub struct Chat {
     context: Context,
     url: String,
     client: Client,
-    reader: Option<ResponseReader>
+    reader: Option<ResponseReader>,
 }
 
 impl Chat {
@@ -20,7 +20,7 @@ impl Chat {
     pub fn new<M, C>(model: M, context: C, port: &str) -> Self
     where
         M: Into<Model>,
-        C: Into<Context>
+        C: Into<Context>,
     {
         Self {
             model: model.into(),
@@ -59,7 +59,9 @@ impl Chat {
 
         // send simple request:
         if !request.stream {
-            let response = self.client.post(&self.url)
+            let response = self
+                .client
+                .post(&self.url)
                 .json(&request)
                 .send()
                 .await?
@@ -89,10 +91,7 @@ impl Chat {
 
             // running async task:
             tokio::spawn(async move {
-                let res = client.post(&url)
-                    .json(&req_clone)
-                    .send()
-                    .await;
+                let res = client.post(&url).json(&req_clone).send().await;
 
                 match res {
                     Ok(response) => {
@@ -110,7 +109,10 @@ impl Chat {
                                                 break;
                                             }
 
-                                            let sr: Result<Stream> = serde_json::from_str(data).map_err(|e| Box::new(e) as Box<dyn std::error::Error>);
+                                            let sr: Result<Stream> = serde_json::from_str(data)
+                                                .map_err(|e| {
+                                                    Box::new(e) as Box<dyn std::error::Error>
+                                                });
                                             if let Ok(sr) = sr {
                                                 for choice in sr.choices {
                                                     // send choice to channel:
@@ -122,7 +124,7 @@ impl Chat {
                                             }
                                         }
                                     }
-                                },
+                                }
 
                                 Err(e) => {
                                     let _ = tx.send(Err(e));
@@ -130,15 +132,18 @@ impl Chat {
                                 }
                             }
                         }
-                    },
-                    
+                    }
+
                     Err(e) => {
                         let _ = tx.send(Err(e));
                     }
                 }
             });
 
-            self.reader = Some( ResponseReader::new(UnboundedReceiverStream::new(rx), request.context) );
+            self.reader = Some(ResponseReader::new(
+                UnboundedReceiverStream::new(rx),
+                request.context,
+            ));
 
             Ok(None)
         }
@@ -152,7 +157,7 @@ impl Chat {
             if reader.context && reader.is_ready {
                 self.context.add(reader.message.clone())
             }
-            
+
             result
         } else {
             None

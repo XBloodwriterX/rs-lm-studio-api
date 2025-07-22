@@ -1,5 +1,6 @@
-use crate::prelude::*;
-use super::StreamChoice;
+use crate::StreamChoice;
+
+use serde::Deserialize;
 
 // Response stream
 #[derive(Debug, Clone, Deserialize)]
